@@ -6,14 +6,23 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS4Controller;
-
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.commands.ArmCommands;
+import frc.robot.commands.BottomCommand;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.StopCommand;
+import frc.robot.commands.StopIntakeCommand;
+import frc.robot.commands.TopCommand;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ManipulatorSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -25,7 +34,27 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
-  private final PS4Controller m_controller = new PS4Controller(Constants.CP);
+  //both my controllers
+  private final PS4Controller m_controller = new PS4Controller(Constants.ControllerPort);
+  private final XboxController m_xbox = new XboxController(Constants.ControllerPort2);
+
+  //climb system basically
+  public static ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
+  public final ClimbCommand climbCommand = new ClimbCommand(m_xbox, m_elevatorSubsystem);
+
+  public static ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  public final ArmCommands armCommands = new ArmCommands(m_xbox, m_armSubsystem);
+
+  //getting the balls
+  public static ManipulatorSubsystem m_manipulatorSubsystem = new ManipulatorSubsystem();
+  public final BottomCommand bottomCommand = new BottomCommand(m_manipulatorSubsystem);
+  public final TopCommand topCommand = new TopCommand(m_manipulatorSubsystem);
+
+  public static IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+  public final IntakeCommand intakeCommand = new IntakeCommand(m_intakeSubsystem);
+  public final StopIntakeCommand stopIntakeCommand = new StopIntakeCommand(m_intakeSubsystem);
+
+  public final StopCommand stopCommand = new StopCommand(m_elevatorSubsystem, m_manipulatorSubsystem);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -40,7 +69,8 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, null
     ));
-
+    climbCommand.schedule();
+    armCommands.schedule();
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -53,9 +83,19 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
-    // new Button(PS4Controller::getBackButton)
-    //         // No requirements because we don't need to interrupt anything
-    //         .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
+    new Button(m_controller::getTriangleButton)
+     // No requirements because we don't need to interrupt anything
+      .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
+    new Button(m_xbox::getXButton)
+      .whenPressed(bottomCommand);
+    new Button(m_xbox::getBButton)
+      .whenPressed(topCommand);
+    new Button(m_xbox::getAButton)
+        .whenPressed(stopCommand);
+    new Button(m_xbox::getYButton)
+      .whenPressed(intakeCommand);
+    new Button(m_xbox::getYButton)
+      .whenReleased(stopIntakeCommand);
   }
 
   /**

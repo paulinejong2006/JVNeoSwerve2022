@@ -21,15 +21,13 @@ public final class Constants {
      * 
      */
 
-    public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.5842; // FIXME Measure and set trackwidth
+    public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.58; // FIXME Measure and set trackwidth
     /**
      * The front-to-back distance between the drivetrain wheels.
      *z
      * Should be measured from center to center.
      */
-    public static final double DRIVETRAIN_WHEELBASE_METERS = 0.7493; // FIXME Measure and set wheelbase
-
-    public static final int DRIVETRAIN_PIGEON_ID = 0; // FIXME Set Pigeon ID
+    public static final double DRIVETRAIN_WHEELBASE_METERS = 0.58; // FIXME Measure and set wheelbase
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 8; // FIXME Set front left module drive motor ID
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 10; // FIXME Set front left module steer motor ID
@@ -51,17 +49,22 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 0; // FIXME Set back right steer encoder ID
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(0); // FIXME Measure and set back right steer offset
 
-    //manipulator`
-    public static final int ENDMOTOR_MANIP = 0;
-    public static final int MIDMOTOR_MANIP = 0;
-
     //intake
-    public static final int INTAKE_MOTOR = 0;
+    public static int IntakeMotor = 16;
 
     //elevator
-    public static final int RIGHT_ELEVATOR_MOTOR = 0;
-    public static final int LEFT_ELEVATOR_MOTOR = 0;
+    public static int ElevatorLeftMotor = 9;
+    public static int ElevatorRightMotor = 11;
 
-    //controller
-    public static final int CP = 0;
+    //climb arms
+    public static int ArmLeftMotor = 0;
+    public static int ArmRightMotor = 0;
+    
+    //manipulator
+    public static int ManipulatorEndMotor = 41;
+    public static int ManipulatorMidMotor = 14;
+
+    //controller ports
+    public static int ControllerPort = 0;
+    public static final int ControllerPort2 = 1;
 }
